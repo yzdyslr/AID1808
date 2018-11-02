@@ -1,0 +1,107 @@
+
+继承模块完成多进程多线程socket并发
+import socketserver
+
+功能：通过模块提供的不同类的组合完成多进程或多线程的tcp或者udp并发程序
+
+StreamRequestHandler  处理tcp套接字请求
+DatagramRequestHandler  处理udp套接字请求
+
+TCPServer  创建tcp server
+UDPServer  创建udp server
+
+ForkingMixIn   创建多进程
+ForkingTCPServer -->  ForkingMinIn + TCPServer
+ForkingUDPServer -->  ForkingMinIn + UDPServer
+
+ThreadingMixIn  创建多线程
+ThreadingTCPServer --> ThreadingMinIn + TCPServer
+ThreadingUDPServer --> ThreadingMinIn + UDPServer
+
+使用步骤：
+    １．创建服务器类，通过选择继承模块的TCPServer或UDPServer确定服务器类型
+    多进程或多线程类确定并发类型
+    ２．创建请求处理类，根据服务器类型选择继承流式套接字处理类还是数据报套接字处理类
+    ３．通过服务器类创建服务器对象，并绑定请求处理类
+    ４．通过server_forever()启动服务器，等待连接请求
+
+HTTPServer   v2.0
+１．接收客户端请求
+２．解析客户端请求
+３．组织数据，以http相应格式返回
+４．将数据发送给浏览器
+
+升级：
+    １．采用多线程并发，可以满足多个客户端同时发起请求
+    ２．基本的请求解析，根据具体的请求内容返回相应的网页
+    ３．除了访问网页，还可以让客户端获取一些数据
+    ４．将整体功能封装为类
+技术点
+    １．使用socket　tcp套接字传输
+    ２．使用多线程作为并发
+    ３．类的封装构建
+    ４．http协议的请求好响应格式
+        http　请求：
+            请求行　　GET　／　　http/1.1
+            请求头
+            空行
+            请求体
+
+        http　响应
+            响应行　　　HTTP/1.1   200  OK
+            响应头
+            空行
+            响应体  具体的内容
+协程基础
+定义：纤程，微线程．是为非抢占式多任务产生子程序的计算机程序组件，协程允许不同入口点
+在不同位置暂停或者开始，简单来说，协程就是可以暂停执行的函数
+
+* yield　实现生成器的跳转是协程现象的基本体现
+协程原理：记录一个函数的上下文栈，协程调度切换是，将记录的上下文栈保存起来，在切换回来时进行调取
+    　　恢复原有的执行内容，因此可以从上一次执行的位置继续执行
+协程的优点：
+    １．协程是一个单线程程序，占有计算机资源很少
+    ２．协程无需进行切换开销
+    ３．协程无需同步互斥
+协程的缺点：
+    １．无法利用计算机多核资源
+
+greenlet
+安装：
+    sudo pip3 install greenlet
+greenlet.greenlet(fun)
+    功能：生成协程对象
+    参数：协程函数
+g.swith()
+    功能：选择要执行的协程事件
+
+gevent
+安装： sudo pip3 install gevent
+1.将协程事件封装我函数
+２．生成协程对象
+    gevent.spawn(func,argv)
+    功能：生成协程对象
+    参数：func　协程函数
+        argv　给协程函数传参(不定参数)
+    返回值：　返回协程对象
+３．协程回收
+    gevent.joinall(list,[timeout])
+    功能：阻塞等待回收协程
+    参数：list 要回收的协程函数列表
+        　timeout　超时时间
+
+gevent.sleep():gevent 阻塞，可以使协程跳转
+＊无论有多少个协程在程序中，同一时刻只能有一个任务执行，且协程不会阻碍主进程的执行
+
+from gevent import monkey
+monkey.patch_all()
+ * 修改了原有的socket代码行为，必须在socket导入前执行
+
+作业：　整理下进程线程网络所学内容
+复习mysql
+    
+
+
+
+
+
